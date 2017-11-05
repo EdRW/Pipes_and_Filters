@@ -33,6 +33,7 @@ public abstract class Filter<T, S> implements Runnable{
 		debugger.report();
 	}
 
-	protected abstract void filter(IPipe<T> read, IPipe<S> write) throws InterruptedException, PipeClosedException;
+	protected abstract void filter(IPipe<T> read, IPipe<S> write) 
+			throws InterruptedException, PipeClosedException;
 	
 }

@@ -50,7 +50,9 @@ public class Debugger {
 	}
 	
 	public void report() {
-		if (performance) System.out.println("Process " + name + " Runtime: " + (stopTime - startTime) + "ms. Average response time: " + avgDuration() + "ns.");
+		if (performance) {
+			System.out.printf("%-40s%-20s%s\n", ("Process " + name + ":"), ("Runtime: " + (stopTime - startTime) + "ms"), ("Average response time: " + avgDuration() + "ns"));
+		}
 	}
 	
 	public static void setLoggingStatus(Boolean status) {

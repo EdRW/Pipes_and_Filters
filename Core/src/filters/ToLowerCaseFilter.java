@@ -11,7 +11,8 @@ public class ToLowerCaseFilter extends Filter<String, String> {
 	}
 
 	@Override
-	protected void filter(IPipe<String> read, IPipe<String> write) throws InterruptedException, PipeClosedException {
+	protected void filter(IPipe<String> read, IPipe<String> write) 
+			throws InterruptedException, PipeClosedException {
 		String word;
 		while ((word = readPipe.blockingRead()) != null) {
 			debugger.tick();
@@ -20,7 +21,8 @@ public class ToLowerCaseFilter extends Filter<String, String> {
 			writePipe.blockingWrite(loweredWord);
 			
 			debugger.tock();
-			if (Debugger.loggingStatus()) System.out.println("ToLowerCaseFilter: " + loweredWord);
+			if (Debugger.loggingStatus()) 
+				System.out.println("ToLowerCaseFilter: " + loweredWord);
 		}
 	}
 

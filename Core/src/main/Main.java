@@ -40,14 +40,15 @@ public class Main {
 		Debugger.setLoggingStatus(false);
 		Debugger.setProfilerStatus(true);
 		
-		IPipe<String> pipe1 = new StringPipe(5000);
-		IPipe<String> pipe2 = new StringPipe(5000);
-		IPipe<String> pipe3 = new StringPipe(5000);
-		IPipe<String> pipe4 = new StringPipe(5000);
-		IPipe<String> pipe5 = new StringPipe(5000);
-		IPipe<HashMap<String, Integer>> pipe6 = new StrIntHashMapPipe(5000);
-		IPipe<String> pipe7 = new StringPipe(5000);
-		IPipe<String> pipe8 = new StringPipe(5000);
+		int bufferSize  = 10;
+		IPipe<String> pipe1 = new StringPipe(bufferSize);
+		IPipe<String> pipe2 = new StringPipe(bufferSize);
+		IPipe<String> pipe3 = new StringPipe(bufferSize);
+		IPipe<String> pipe4 = new StringPipe(bufferSize);
+		IPipe<String> pipe5 = new StringPipe(bufferSize);
+		IPipe<HashMap<String, Integer>> pipe6 = new StrIntHashMapPipe(bufferSize);
+		IPipe<String> pipe7 = new StringPipe(bufferSize);
+		IPipe<String> pipe8 = new StringPipe(bufferSize);
 		
 		try {
 			Source<String> source = new TextFileWordSource(pipe1, "kjbible.txt");
