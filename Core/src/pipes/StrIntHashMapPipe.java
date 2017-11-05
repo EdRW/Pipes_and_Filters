@@ -47,5 +47,15 @@ public class StrIntHashMapPipe implements IPipe<HashMap<String, Integer>> {
 		queue.offer(POISON_PILL);
 		writable.set(false);
 	}
+	
+	@Override
+	public int remainingCapacity() {
+		return queue.remainingCapacity();
+	}
+
+	@Override
+	public int size() {
+		return queue.size();
+	}
 
 }

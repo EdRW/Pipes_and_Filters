@@ -8,6 +8,7 @@ import java.util.Set;
 
 import pipes.IPipe;
 import pipes.PipeClosedException;
+import utils.Debugger;
 
 public class StopWordFilter extends Filter<String, String> {
 	
@@ -30,10 +31,15 @@ public class StopWordFilter extends Filter<String, String> {
 	protected void filter(IPipe<String> read, IPipe<String> write) throws InterruptedException, PipeClosedException {
 		String word;
 		while ((word = readPipe.blockingRead()) != null) {
+			debugger.tick();
+			
 			if (!stopWords.contains(word)) {
 				writePipe.blockingWrite(word);
-				System.out.println("StopWordFilter: " + word);
+				
+				if (Debugger.loggingStatus()) System.out.println("StopWordFilter: " + word);
 			}
+			
+			debugger.tock();
 		}
 		
 	}

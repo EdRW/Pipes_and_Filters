@@ -9,4 +9,8 @@ public interface IPipe<T> {
 	public void blockingClose() throws InterruptedException;
 	
 	public void unsafeClose();
+	
+	public int remainingCapacity();
+	
+	public int size();
 }

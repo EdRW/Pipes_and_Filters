@@ -13,10 +13,17 @@ public class FirstNumWordsFilter extends Filter<String, String> {
 
 	@Override
 	protected void filter(IPipe<String> read, IPipe<String> write) throws InterruptedException, PipeClosedException {
-		String word;	
-		for (int i = 0; i < numItems; i++ ) {
-			if ((word = readPipe.blockingRead()) == null) break;
-			writePipe.blockingWrite(word);
+		String word;
+		int i = 0;
+		
+		while ((word = readPipe.blockingRead()) != null) {
+			debugger.tick();
+			
+			if(i < numItems) {
+				writePipe.blockingWrite(word);
+			}
+			i++;
+			debugger.tock();
 		}
 	}
 

@@ -2,6 +2,7 @@ package filters;
 
 import pipes.IPipe;
 import pipes.PipeClosedException;
+import utils.Debugger;
 
 public class NonAlphaFilter extends Filter<String, String> {
 
@@ -13,10 +14,15 @@ public class NonAlphaFilter extends Filter<String, String> {
 	protected void filter(IPipe<String> read, IPipe<String> write) throws InterruptedException, PipeClosedException {
 		String word;
 		while ((word = readPipe.blockingRead()) != null) {
+			debugger.tick();
+			
 			if (word.matches("[A-Za-z]+")) {
 				writePipe.blockingWrite(word);
-				System.out.println("NonAlphaFilter: " + word);
+				
+				if (Debugger.loggingStatus()) System.out.println("NonAlphaFilter: " + word);
 			}
+			
+			debugger.tock();
 		}
 	}
 

@@ -2,6 +2,7 @@ package filters;
 
 import pipes.IPipe;
 import pipes.PipeClosedException;
+import utils.Debugger;
 
 public class PorterStemmerFilter extends Filter<String, String> {
 
@@ -13,13 +14,17 @@ public class PorterStemmerFilter extends Filter<String, String> {
 	protected void filter(IPipe<String> read, IPipe<String> write) throws InterruptedException, PipeClosedException {
 		String word;
 		while ((word = readPipe.blockingRead()) != null) {
+			debugger.tick();
+			
 //			Stemmer stemmer =  new Stemmer();
 //			stemmer.add(word.toCharArray(), word.length());
 //			stemmer.stem();
 			Porter porter = new Porter();
 			String stemmedWord = porter.stripAffixes(word);
 			writePipe.blockingWrite(stemmedWord);
-			System.out.println("StemmerFilter: " + stemmedWord);
+			
+			debugger.tock();
+			if (Debugger.loggingStatus()) System.out.println("StemmerFilter: " + stemmedWord);
 		}
 	}
 	

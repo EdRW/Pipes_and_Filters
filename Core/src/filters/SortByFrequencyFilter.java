@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import pipes.IPipe;
 import pipes.PipeClosedException;
+import utils.Debugger;
 
 public class SortByFrequencyFilter extends Filter<HashMap<String, Integer>, String> {
 
@@ -20,10 +21,15 @@ public class SortByFrequencyFilter extends Filter<HashMap<String, Integer>, Stri
 			throws InterruptedException, PipeClosedException {
 		HashMap<String, Integer> termFrequency;
 		while ((termFrequency = readPipe.blockingRead()) != null) {
+			debugger.tick();
+			
 			Map<String, Integer> sortedTerms = sortByValue(termFrequency);
 			for (String term : sortedTerms.keySet()) {
+				//System.out.println("attempting to write " + term + "to pipe with remaining capacity: " + writePipe.remainingCapacity());
 				writePipe.blockingWrite(term);
-				System.out.println("SortedFreqFilter: " + term + ", " + termFrequency.get(term));
+				
+				debugger.tock();
+				if (Debugger.loggingStatus()) System.out.println("SortedFreqFilter: " + term + ", " + termFrequency.get(term));
 			}			
 		}
 	}
@@ -32,27 +38,28 @@ public class SortByFrequencyFilter extends Filter<HashMap<String, Integer>, Stri
 	 * Found this Hashmap sorting code on
 	 * https://www.programcreek.com/2013/03/java-sort-map-by-value/ 
 	 */	
-	private Map sortByValue(Map unsortedMap) {
-		Map sortedMap = new TreeMap(new ValueComparator(unsortedMap));
+	private Map<String, Integer> sortByValue(Map<String, Integer> unsortedMap) {
+		Map<String, Integer> sortedMap = new TreeMap<String, Integer>(new ValueComparator(unsortedMap));
 		sortedMap.putAll(unsortedMap);
 		return sortedMap;
 	}
 	
-	class ValueComparator implements Comparator {
-		Map map;
+	class ValueComparator implements Comparator<String> {
+		Map<String, Integer> map;
 	 
-		public ValueComparator(Map map) {
+		public ValueComparator(Map<String, Integer> map) {
 			this.map = map;
 		}
 	 
-		public int compare(Object keyA, Object keyB) {
-			Comparable valueA = (Comparable) map.get(keyA);
-			Comparable valueB = (Comparable) map.get(keyB);
+		public int compare(String keyA, String keyB) {
+			Integer valueA = (Integer) map.get(keyA);
+			Integer valueB = (Integer) map.get(keyB);
 			int returnVal = valueB.compareTo(valueA);
 			if (returnVal == 0) {
-				returnVal = ((Comparable)keyA).compareTo(((Comparable)keyB));
+				returnVal = ((String)keyA).compareTo(((String)keyB));
 			}
 			return returnVal;
 		}
+
 	}
 }

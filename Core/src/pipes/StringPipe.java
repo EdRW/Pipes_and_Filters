@@ -47,4 +47,16 @@ public class StringPipe implements IPipe<String>{
 		writable.set(false);
 	}
 
+	@Override
+	public int remainingCapacity() {
+		return queue.remainingCapacity();
+	}
+
+	@Override
+	public int size() {
+		return queue.size();
+	}
+	
+	
+
 }
