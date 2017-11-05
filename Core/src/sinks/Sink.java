@@ -5,24 +5,21 @@ import pipes.PipeClosedException;
 
 public abstract class Sink<T> implements Runnable {
 
-	private IPipe<T> readPipe;
+	protected IPipe<T> readPipe;
 
-	Sink(IPipe<T> readPipe) {
+	protected Sink(IPipe<T> readPipe) {
 		this.readPipe = readPipe;
 	}
 	
 	@Override
 	public void run() {
 		try {
-			T item;
-			while ((item = readPipe.blockingRead()) != null) {
-				useItem(item);
-			}
+			handleItem(readPipe);
 		} catch (InterruptedException | PipeClosedException e) {
 			e.printStackTrace();
 		}
 	}
 
-	protected abstract void useItem(T item);
+	protected abstract void handleItem(IPipe<T> read) throws InterruptedException, PipeClosedException;
 
 }

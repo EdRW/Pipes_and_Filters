@@ -5,22 +5,17 @@ import pipes.PipeClosedException;
 
 public abstract class Source<T> implements Runnable {
 
-	private IPipe<T> writePipe;
+	protected final IPipe<T> writePipe;
 
-	Source(IPipe<T> writePipe) {
+	protected Source(IPipe<T> writePipe) {
 		this.writePipe = writePipe;
 	}
 	
 	@Override
 	public void run() {
 		try {
-			T item;
-			while ((item = readItem()) != null) {
-				writePipe.blockingWrite(item);
-			}
-			
+			generateItems(writePipe);
 			writePipe.blockingClose();
-			
 		}catch (InterruptedException | PipeClosedException e) {
 			e.printStackTrace();
 			writePipe.unsafeClose();
@@ -28,6 +23,5 @@ public abstract class Source<T> implements Runnable {
 		
 	}
 	
-	protected abstract T readItem(); 
-
+	protected abstract void generateItems(IPipe<T> write) throws InterruptedException, PipeClosedException;
 }

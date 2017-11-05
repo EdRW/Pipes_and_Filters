@@ -5,10 +5,10 @@ import pipes.PipeClosedException;
 
 public abstract class Filter<T, S> implements Runnable{
 	
-	private IPipe<T> readPipe;
-	private IPipe<S> writePipe;
+	protected final IPipe<T> readPipe;
+	protected final IPipe<S> writePipe;
 
-	Filter(IPipe<T> readPipe, IPipe<S> writePipe) {
+	protected Filter(IPipe<T> readPipe, IPipe<S> writePipe) {
 		this.readPipe = readPipe;
 		this.writePipe = writePipe;
 	}
@@ -24,11 +24,6 @@ public abstract class Filter<T, S> implements Runnable{
 		}
 	}
 
-	protected abstract void filter(IPipe<T> readPipe, IPipe<S> writePipe) throws InterruptedException, PipeClosedException;
+	protected abstract void filter(IPipe<T> read, IPipe<S> write) throws InterruptedException, PipeClosedException;
 	
-//	T item;
-//	while ((item = readPipe.blockingRead()) != null) {
-//		S newItem = filter(item);
-//		writePipe.blockingWrite(newItem);
-//	}
 }

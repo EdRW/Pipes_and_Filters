@@ -9,7 +9,7 @@ public class StringPipe implements IPipe<String>{
 	LinkedBlockingQueue<String> queue = null;
 	AtomicBoolean writable;
 	
-	StringPipe(int size) {
+	public StringPipe(int size) {
 		this.queue =  new LinkedBlockingQueue<>(size);
 		this.writable = new AtomicBoolean(true);
 	}
