@@ -9,6 +9,9 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+/*
+ * Sorts a Hashmap of string, int into order based on the int.
+ */
 public class SortByFrequencyFilter extends Filter<HashMap<String, Integer>, String> {
 
 	public SortByFrequencyFilter(IPipe<HashMap<String, Integer>> readPipe,

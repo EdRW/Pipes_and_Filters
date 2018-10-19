@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/*
+ * this pipe uses a blocking queue with a fixed buffer size
+ * the items in the pipe are HashMap<String, Integer>.
+ * the POISON_PILL is put into the pipe as the last items 
+ * to notify the filter reading from it that there will be no more items to read.
+ */
 public class StrIntHashMapPipe implements IPipe<HashMap<String, Integer>> {
 	private static final HashMap<String, Integer> POISON_PILL = new HashMap<String, Integer>();
 	

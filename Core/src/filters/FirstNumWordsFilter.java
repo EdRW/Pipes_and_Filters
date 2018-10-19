@@ -3,6 +3,11 @@ package filters;
 import pipes.IPipe;
 import pipes.PipeClosedException;
 
+/*
+ * takes number and passes only the first few items up until
+ * the number of items configured. The rest of the items get thrown
+ * away.
+ */
 public class FirstNumWordsFilter extends Filter<String, String> {
 	int numItems;
 

@@ -4,6 +4,9 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+/*
+ * Stermming filter that converts word into just their roots based on the Porter stemming algorithm
+ */
 public class PorterStemmerFilter extends Filter<String, String> {
 
 	public PorterStemmerFilter(IPipe<String> readPipe, IPipe<String> writePipe) {
@@ -15,10 +18,7 @@ public class PorterStemmerFilter extends Filter<String, String> {
 		String word;
 		while ((word = readPipe.blockingRead()) != null) {
 			debugger.tick();
-			
-//			Stemmer stemmer =  new Stemmer();
-//			stemmer.add(word.toCharArray(), word.length());
-//			stemmer.stem();
+
 			Porter porter = new Porter();
 			String stemmedWord = porter.stripAffixes(word);
 			writePipe.blockingWrite(stemmedWord);

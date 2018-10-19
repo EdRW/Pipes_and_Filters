@@ -8,6 +8,10 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+
+/*
+ * reads in a text file. it filters punctuation and symbols
+ */
 public class TextFileWordSource extends Source<String> {
 	Scanner fileScanner;
 	
@@ -15,6 +19,7 @@ public class TextFileWordSource extends Source<String> {
 		super(writePipe);
 		this.fileScanner = new Scanner(new File(fileName));
 	}
+	
 
 	@Override
 	protected void generateItems(IPipe<String> write) throws InterruptedException, PipeClosedException {

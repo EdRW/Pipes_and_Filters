@@ -4,6 +4,9 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+/*
+ * Throws away any strings that are not letters
+ */
 public class NonAlphaFilter extends Filter<String, String> {
 
 	public NonAlphaFilter(IPipe<String> readPipe, IPipe<String> writePipe) {

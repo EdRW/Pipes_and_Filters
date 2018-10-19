@@ -10,6 +10,11 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+/*
+ * takes a file with a list of words. throws away any word
+ * that matches a word on the list.
+ */
+
 public class StopWordFilter extends Filter<String, String> {
 	
 	private Scanner fileScanner;

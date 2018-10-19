@@ -19,6 +19,7 @@ public class PrintSink extends Sink<String> {
 			
 			debugger.tock();
 		}
+		System.out.println();
 	}
 
 }

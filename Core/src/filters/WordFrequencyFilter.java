@@ -6,6 +6,10 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+/*
+ * computers the frequency of each word
+ * and outputs a hashmap of the words and their frequencies
+ */
 public class WordFrequencyFilter extends Filter<String, HashMap<String, Integer>> {
 	HashMap<String, Integer> termFrequency;
 

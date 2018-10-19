@@ -1,7 +1,10 @@
 package main;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import filters.Filter;
 import filters.FirstNumWordsFilter;
@@ -18,7 +21,9 @@ import sinks.PrintSink;
 import sinks.Sink;
 import sources.Source;
 import sources.TextFileWordSource;
+import utils.Combiner;
 import utils.Debugger;
+import utils.Splitter;
 
 public class Main {
 
@@ -40,6 +45,32 @@ public class Main {
 		Debugger.setLoggingStatus(false);
 		Debugger.setProfilerStatus(true);
 		
+		try {
+			Scanner reader = new Scanner(System.in);
+			System.out.println("Enter a .txt filename located within the same folder at this application:");
+			String fileName = reader.next();
+			System.out.println();
+
+		
+		
+			/* 
+			 *  redesigned implementation is slower than original implementation...
+			 */
+			System.out.println("Top 10 most frequent terms in: " + fileName);
+			//originalImplementation(fileName);
+			redesignedImplementation(fileName);
+			
+			System.out.println();
+			System.out.println("Press Enter to Exit...");
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	private static void originalImplementation(String fileName) {
 		int bufferSize  = 10;
 		IPipe<String> pipe1 = new StringPipe(bufferSize);
 		IPipe<String> pipe2 = new StringPipe(bufferSize);
@@ -51,7 +82,7 @@ public class Main {
 		IPipe<String> pipe8 = new StringPipe(bufferSize);
 		
 		try {
-			Source<String> source = new TextFileWordSource(pipe1, "kjbible.txt");
+			Source<String> source = new TextFileWordSource(pipe1, fileName);
 			Filter<String, String> nonAlphaFilter = new NonAlphaFilter(pipe1, pipe2);
 			Filter<String, String> toLowerCaseFilter = new ToLowerCaseFilter(pipe2, pipe3);
 			Filter<String, String> stopWordFilter = new StopWordFilter(pipe3, pipe4, "stopwords.txt");
@@ -72,7 +103,7 @@ public class Main {
 			Thread t8 = new Thread(firstNumWordsFilter);
 			Thread t9 = new Thread(printSink);
 			
-			Debugger debugger = new Debugger("Main");
+			Debugger debugger = new Debugger("Original Main");
 			debugger.start();
 			
 			t1.start();
@@ -96,12 +127,95 @@ public class Main {
 			t9.join();
 						
 			debugger.stop();
+			System.out.println();
 			debugger.report();
 			
 		} catch (FileNotFoundException | InterruptedException e) {
 			e.printStackTrace();
 		}
-
 	}
+	
+	private static void redesignedImplementation(String fileName) {
+		try {
+			int bufferSize  = 10;
+			int numBranches = 1024;
+			
+			ArrayList<Thread> filterThreads = new ArrayList<>();
+			
+			IPipe<String> pipe1 = new StringPipe(bufferSize);
+			IPipe<String> pipe5 = new StringPipe(bufferSize);
+			
+			for (int i = 0; i < numBranches; i++) {
+				IPipe<String> pipe2 = new StringPipe(bufferSize);
+				IPipe<String> pipe3 = new StringPipe(bufferSize);
+				IPipe<String> pipe4 = new StringPipe(bufferSize);
+				
+				Filter<String, String> nonAlphaFilter = new NonAlphaFilter(pipe1, pipe2);
+				Filter<String, String> toLowerCaseFilter = new ToLowerCaseFilter(pipe2, pipe3);
+				Filter<String, String> stopWordFilter = new StopWordFilter(pipe3, pipe4, "stopwords.txt");
+				Filter<String, String> porterStemmerFilter = new PorterStemmerFilter(pipe4, pipe5);
+				
+				Thread t2 = new Thread(nonAlphaFilter);
+				Thread t3 = new Thread(toLowerCaseFilter);
+				Thread t4 = new Thread(stopWordFilter);
+				Thread t5 = new Thread(porterStemmerFilter);
+				
+				filterThreads.add(t2);
+				filterThreads.add(t3);
+				filterThreads.add(t4);
+				filterThreads.add(t5);
+					
+			}
+			
+			IPipe<String> pipe0 = new StringPipe(bufferSize);
+			IPipe<String> pipe6 = new StringPipe(bufferSize);
+			IPipe<HashMap<String, Integer>> pipe7 = new StrIntHashMapPipe(bufferSize);
+			IPipe<String> pipe8 = new StringPipe(bufferSize);
+			IPipe<String> pipe9 = new StringPipe(bufferSize);
+			
+			Source<String> source = new TextFileWordSource(pipe0, fileName);
+			Splitter<String> splitter = new Splitter<String>(pipe0, pipe1, numBranches);
+			Combiner<String> combiner = new Combiner<String>(pipe5, pipe6, numBranches);
+			Filter<String, HashMap<String, Integer>> wordFrequencyFilter = new WordFrequencyFilter(pipe6, pipe7);
+			Filter<HashMap<String, Integer>, String> sortByFrequencyFilter = new SortByFrequencyFilter(pipe7, pipe8);
+			Filter<String, String> firstNumWordsFilter = new FirstNumWordsFilter(pipe8, pipe9, 10);
+			Sink<String> printSink = new PrintSink(pipe9);
+			
+			Thread t0 = new Thread(source);
+			Thread t1 = new Thread(splitter);
+			Thread t6 = new Thread(combiner);
+			Thread t7 = new Thread(wordFrequencyFilter);
+			Thread t8 = new Thread(sortByFrequencyFilter);
+			Thread t9 = new Thread(firstNumWordsFilter);
+			Thread t10 = new Thread(printSink);
+			
+			filterThreads.add(t0);
+			filterThreads.add(t1);
+			filterThreads.add(t6);
+			filterThreads.add(t7);
+			filterThreads.add(t8);
+			filterThreads.add(t9);
+			filterThreads.add(t10);
+			
+			Debugger debugger = new Debugger("Redesigned Main");
+			debugger.start();
+			
+			for (Thread t : filterThreads) {
+				t.start();
+			}
+			
+			for (Thread t : filterThreads) {
+				t.join();
+			}
+			
+			debugger.stop();
+			System.out.println();
+			debugger.report();
+			
+		} catch (FileNotFoundException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 }

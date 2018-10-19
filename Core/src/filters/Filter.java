@@ -4,6 +4,12 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+
+/*
+ * abstract class from which all filters should inherit
+ * concrete filters only need to implement the filter method
+ * this abstract class handles the rest.
+ */
 public abstract class Filter<T, S> implements Runnable{
 	
 	protected final IPipe<T> readPipe;

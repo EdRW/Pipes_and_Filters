@@ -4,6 +4,9 @@ import pipes.IPipe;
 import pipes.PipeClosedException;
 import utils.Debugger;
 
+/*
+ * converts all words to lower case
+ */
 public class ToLowerCaseFilter extends Filter<String, String> {
 
 	public ToLowerCaseFilter(IPipe<String> readPipe, IPipe<String> writePipe) {
